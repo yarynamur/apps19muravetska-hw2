@@ -14,18 +14,18 @@ public class ImmutableLinkedList implements ImmutableList{
     }
 
     private void checkSize(int index) throws IndexOutOfBoundsException {
-        if (index >= this.len || index < 0) {
+        if (index > this.len || index < 0) {
             throw new IndexOutOfBoundsException();
         }
     }
 
     @Override
-    public ImmutableList add(Object e) {
+    public ImmutableLinkedList add(Object e) {
         return add(this.len, e);
     }
 
     @Override
-    public ImmutableList add(int index, Object e) {
+    public ImmutableLinkedList add(int index, Object e) {
         checkSize(index);
         ImmutableLinkedList NewImmutableLinkedList = new ImmutableLinkedList();
         NewImmutableLinkedList.head = head;
@@ -36,26 +36,28 @@ public class ImmutableLinkedList implements ImmutableList{
             NewImmutableLinkedList.head = newNode;
         }
         else{
-            Node temp = new Node(NewImmutableLinkedList.head.value, NewImmutableLinkedList.head.next);
+            Node hd = new Node(head.value, head.next);
+            NewImmutableLinkedList.head = hd;
+            Node temp = NewImmutableLinkedList.head;
             for (int i = 0; i < index - 1; i++){
                 temp = temp.next;
             }
-            Node newNode = temp.next;
-            temp.next = new Node(e, newNode);
+            Node nextEl = temp.next;
+            temp.next = new Node(e, nextEl);
         }
         return NewImmutableLinkedList;
     }
 
     @Override
-    public ImmutableList addAll(Object[] c) {
+    public ImmutableLinkedList addAll(Object[] c) {
         return addAll(this.len, c);
     }
 
     @Override
-    public ImmutableList addAll(int index, Object[] c) {
+    public ImmutableLinkedList addAll(int index, Object[] c) {
         checkSize(index);
         ImmutableLinkedList TempImmutableLinkedList = new ImmutableLinkedList();
-        ImmutableList NewImmutableLinkedList;
+        ImmutableLinkedList NewImmutableLinkedList;
         TempImmutableLinkedList.head = head;
         TempImmutableLinkedList.tail = tail;
         TempImmutableLinkedList.len = len;
@@ -70,9 +72,6 @@ public class ImmutableLinkedList implements ImmutableList{
     @Override
     public Object get(int index) {
         checkSize(index);
-        if (index==len-1){
-            return tail.value;
-        }
         Node temp = new Node(head.value, head.next);
         for (int i = 0; i < index; i++){
             temp = temp.next;
@@ -86,21 +85,31 @@ public class ImmutableLinkedList implements ImmutableList{
         ImmutableLinkedList NewImmutableLinkedList = new ImmutableLinkedList();
         NewImmutableLinkedList.head = head;
         NewImmutableLinkedList.tail = tail;
-        NewImmutableLinkedList.len = len;
+        NewImmutableLinkedList.len = len-1;
         if (index==0){
             NewImmutableLinkedList.head = NewImmutableLinkedList.head.next;
+            return NewImmutableLinkedList;
         }
-        else{
-            for (int i = 0; i < index - 1; i++){
-                NewImmutableLinkedList.tail = NewImmutableLinkedList.tail.next;
+        else {
+            Node hd = head;
+            NewImmutableLinkedList.head = new Node(hd.value, hd.next);
+            Node change = NewImmutableLinkedList.head;
+            hd = hd.next;
+            int counter = 0;
+            while (counter < index - 1) {
+                change.next = new Node(hd.value, hd.next);
+                change = change.next;
+                hd = hd.next;
+                counter += 1;
             }
-            NewImmutableLinkedList.tail.next = NewImmutableLinkedList.tail.next.next;
-            while (NewImmutableLinkedList.tail.next != null) {
-                NewImmutableLinkedList.tail = NewImmutableLinkedList.tail.next;
+            hd = hd.next;
+            while (hd != null) {
+                change.next = new Node(hd.value, hd.next);
+                change = change.next;
+                hd = hd.next;
             }
+            return NewImmutableLinkedList;
         }
-        NewImmutableLinkedList.len = len - 1;
-        return NewImmutableLinkedList;
     }
 
     @Override
@@ -118,7 +127,7 @@ public class ImmutableLinkedList implements ImmutableList{
         Node temp;
         temp = head;
         for (int i = 0; i < len; i++) {
-            if (temp.value == e) {
+            if (temp.value.equals(e)) {
                 return i;
             }
             temp = temp.next;
@@ -170,7 +179,7 @@ public class ImmutableLinkedList implements ImmutableList{
     }
 
     public Object getLast() {
-        return tail.value;
+        return get(size()-1);
     }
 
     public ImmutableLinkedList removeFirst() {
