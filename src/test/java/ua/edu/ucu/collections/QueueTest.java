@@ -21,14 +21,14 @@ public class QueueTest {
     @Test
     public void testEnqueue(){
         fill_queue(q, 5);
-        assertArrayEquals(new Object[]{5, 4, 3, 2, 1}, q.queue.toArray());
+        assertArrayEquals(new Object[]{1, 2, 3, 4, 5}, q.queue.toArray());
     }
 
     @Test
     public void testDequeue(){
         fill_queue(q, 3);
         assertEquals(1, q.dequeue());
-        assertArrayEquals(new Object[]{3, 2, 1}, q.queue.toArray());
+        assertArrayEquals(new Object[]{2, 3}, q.queue.toArray());
     }
 
     @Test
@@ -41,5 +41,5 @@ public class QueueTest {
     public void testException() {
         q.dequeue();
     }
-    
+
 }
